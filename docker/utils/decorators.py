@@ -35,3 +35,18 @@ def minimum_version(version):
             return f(self, *args, **kwargs)
         return wrapper
     return decorator
+
+
+def handle_interactive_response(f):
+    @functools.wraps(f)
+    def wrapped(self, *args, **kwargs):
+        socket = kwargs.get("socket", False)
+        stream = kwargs.get("stream", False)
+        tty = kwargs.get("tty", False)
+
+        response = f(self, *args, **kwargs)
+
+        if socket:
+            return self._get_raw_response_socket(response)
+        return self._get_result_tty(stream, response, tty)
+    return wrapped
