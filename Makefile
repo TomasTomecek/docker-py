@@ -30,10 +30,10 @@ integration-test: build
 integration-test-py3: build-py3
 	docker run -v /var/run/docker.sock:/var/run/docker.sock docker-py3 py.test tests/integration
 
-integration-dind: build build-py3
+integration-dind: build
 	docker run -d --name dpy-dind --env="DOCKER_HOST=tcp://localhost:2375" --privileged dockerswarm/dind:1.9.0 docker -d -H tcp://0.0.0.0:2375
-	docker run --env="DOCKER_HOST=tcp://docker:2375" --link=dpy-dind:docker docker-py py.test tests/integration
-	docker run --env="DOCKER_HOST=tcp://docker:2375" --link=dpy-dind:docker docker-py3 py.test tests/integration
+	docker run --env="DOCKER_HOST=tcp://docker:2375" --link=dpy-dind:docker docker-py py.test tests/integration/exec_test.py
+# 	docker run --env="DOCKER_HOST=tcp://docker:2375" --link=dpy-dind:docker docker-py3 py.test tests/integration/exec_test.py
 	docker rm -vf dpy-dind
 
 integration-dind-ssl: build-dind-certs build build-py3
